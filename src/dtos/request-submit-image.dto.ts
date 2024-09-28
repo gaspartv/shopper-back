@@ -1,7 +1,7 @@
 import {MeasureTypeEnum} from "../enums/measure-type.enum";
 import {IsBase64, IsDate, IsEnum, IsString} from "class-validator";
 
-export class SubmitImageDto {
+export class RequestSubmitImageDto {
     @IsBase64()
     image: string
 
