@@ -1,11 +1,15 @@
 import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
+import { APP_FILTER } from "@nestjs/core";
+import { MeasuresModule } from "./module/measures/measures.module";
+import { GeminiModule } from "./providers/gemini/gemini.module";
+import { ValidationExceptionFilter } from "./utils/validation-exception-filter";
 
 @Module({
   imports: [
+    MeasuresModule,
+    GeminiModule,
     ConfigModule.forRoot({
       envFilePath: [".env"],
       isGlobal: true,
@@ -17,7 +21,12 @@ import { AppService } from "./app.service";
       }),
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: ValidationExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
