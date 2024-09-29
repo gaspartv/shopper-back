@@ -1,29 +1,39 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import {Logger, ValidationPipe} from "@nestjs/common";
-import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
+import { Logger, ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import * as bodyParser from "body-parser";
+import * as express from "express";
+import { join } from "path";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true
+    cors: true,
   });
 
+  app.use(bodyParser.json({ limit: "50mb" }));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+
   app.useGlobalPipes(
-      new ValidationPipe({
-        errorHttpStatusCode: 422,
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        forbidUnknownValues: true,
-        transform: true,
-      }),
+    new ValidationPipe({
+      errorHttpStatusCode: 400,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      transform: true,
+    }),
   );
 
+  app.use("/", express.static(join(__dirname, "..", "tmp")));
+
   const config = new DocumentBuilder()
-      .addBearerAuth()
-      .setTitle("Shopper")
-      .setDescription("API para facilitar a coleta de informação e leitura individualizada do consumo de água e gás.")
-      .setVersion("1.0")
-      .build();
+    .addBearerAuth()
+    .setTitle("Shopper")
+    .setDescription(
+      "API para facilitar a coleta de informação e leitura individualizada do consumo de água e gás.",
+    )
+    .setVersion("1.0")
+    .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("docs", app, document, {
     jsonDocumentUrl: "docs/json",
@@ -33,4 +43,4 @@ async function bootstrap() {
     Logger.log("3333", "StartedPort");
   });
 }
-bootstrap().then(r => r);
+bootstrap().then((r) => r);
