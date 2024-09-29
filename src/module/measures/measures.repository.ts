@@ -12,8 +12,8 @@ export class MeasuresPrismaRepository implements MeasuresRepository {
   async save(entity: Measure): Promise<ResponseMeasureDto> {
     return await this.prisma.measure.upsert({
       where: { measure_uuid: entity.id },
-      update: entity.get(),
-      create: entity.get(),
+      update: entity.toJson,
+      create: entity.toJson,
     });
   }
 

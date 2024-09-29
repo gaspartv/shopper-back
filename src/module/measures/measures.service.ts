@@ -45,7 +45,8 @@ export class MeasuresService {
       );
     }
     const updatedMeasure = new Measure(measure);
-    updatedMeasure.setHasConfirmed(true);
+    updatedMeasure.has_confirmed = true;
+    updatedMeasure.measure_value = dto.confirmed_value;
     await this.repository.save(updatedMeasure);
     return { success: true };
   }
@@ -94,9 +95,9 @@ export class MeasuresService {
     );
     if (exists) {
       Exception.execute(
-        "Already exists a measure with this data",
+        "Leitura do mês já realizada",
         "DOUBLE_REPORT",
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
   }
@@ -128,13 +129,13 @@ export class MeasuresService {
     measureValue: number,
   ) {
     const measure = new Measure();
-    measure.create({
+    measure.create = {
       customer_code: dto.customer_code,
       measure_datetime: dto.measure_datetime,
       measure_type: dto.measure_type,
       image_url: name,
       measure_value: measureValue,
-    });
+    };
 
     return this.repository.save(measure);
   }

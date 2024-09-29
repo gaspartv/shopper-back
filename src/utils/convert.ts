@@ -7,18 +7,17 @@ export class Convert {
     image: string,
     customer_code: string,
   ): Promise<{ name: string; filePath: string; mimeType: string }> {
-    const matches = image.match(/^data:(image\/\w+);base64,(.+)$/);
-    const type = matches[1];
-    console.log(type);
-    const base64Data = matches[2];
-    const buffer = Buffer.from(base64Data, "base64");
-    const extension = type.split("/")[1];
-    const name = `${customer_code}-${Date.now()}.${extension}`;
-    const mainDirname = join(__dirname, "..", "..", "tmp");
-    const filePath = mainDirname + "/" + name;
+    const { base64Data, type } = this.extractImageData(image);
+
+    const name = this.generateFileName(customer_code, type);
+
+    const dirName = join(__dirname, "..", "..", "tmp");
+
+    const filePath = dirName + "/" + name;
+
     try {
-      await mkdir(mainDirname, { recursive: true });
-      await writeFile(filePath, buffer);
+      await mkdir(dirName, { recursive: true });
+      await writeFile(filePath, base64Data);
       return { name, filePath, mimeType: type };
     } catch (error) {
       throw new HttpException(
@@ -29,5 +28,23 @@ export class Convert {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  private static generateFileName(customer_code: string, type: string): string {
+    const extension = type.split("/")[1];
+    return `${customer_code}-${Date.now()}.${extension}`;
+  }
+
+  private static extractImageData(image: string): {
+    type: string;
+    base64Data: Buffer;
+  } {
+    const matches = image.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (!matches) {
+      throw new Error("Invalid image data");
+    }
+    const type = matches[1];
+    const base64Data = Buffer.from(matches[2], "base64");
+    return { type, base64Data };
   }
 }

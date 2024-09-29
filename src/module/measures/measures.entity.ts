@@ -22,47 +22,47 @@ interface MeasureCreateDto {
 }
 
 export class Measure {
-  private measure_uuid?: string;
-  private measure_datetime?: Date;
-  private measure_type?: string;
-  private has_confirmed?: boolean;
-  private image_url?: string;
-  private measure_value?: number;
-  private customer_code?: string;
+  private _measure_uuid?: string;
+  private _measure_datetime?: Date;
+  private _measure_type?: string;
+  private _has_confirmed?: boolean;
+  private _image_url?: string;
+  private _measure_value?: number;
+  private _customer_code?: string;
 
   constructor(dto?: MeasureSetDto) {
-    this.measure_uuid = dto?.measure_uuid;
-    this.measure_datetime = dto?.measure_datetime;
-    this.measure_type = dto?.measure_type;
-    this.has_confirmed = dto?.has_confirmed;
-    this.image_url = dto?.image_url;
-    this.measure_value = dto?.measure_value;
-    this.customer_code = dto?.customer_code;
+    this._measure_uuid = dto?.measure_uuid;
+    this._measure_datetime = dto?.measure_datetime;
+    this._measure_type = dto?.measure_type;
+    this._has_confirmed = dto?.has_confirmed;
+    this._image_url = dto?.image_url;
+    this._measure_value = dto?.measure_value;
+    this._customer_code = dto?.customer_code;
   }
 
-  get() {
+  get toJson() {
     return {
-      measure_uuid: this.measure_uuid,
-      measure_datetime: this.measure_datetime,
-      measure_type: this.measure_type,
-      has_confirmed: this.has_confirmed,
-      image_url: this.image_url,
-      measure_value: this.measure_value,
-      customer_code: this.customer_code,
+      measure_uuid: this._measure_uuid,
+      measure_datetime: this._measure_datetime,
+      measure_type: this._measure_type,
+      has_confirmed: this._has_confirmed,
+      image_url: this._image_url,
+      measure_value: this._measure_value,
+      customer_code: this._customer_code,
     };
   }
 
   get id() {
-    return this.measure_uuid;
+    return this._measure_uuid;
   }
 
-  setMeasureDatetime(measure_datetime: Date) {
-    measure_datetime =
-      measure_datetime instanceof Date
-        ? measure_datetime
-        : new Date(measure_datetime);
-    if (measure_datetime instanceof Date) {
-      this.measure_datetime = measure_datetime;
+  set measure_datetime(measureDatetime: Date) {
+    measureDatetime =
+      measureDatetime instanceof Date
+        ? measureDatetime
+        : new Date(measureDatetime);
+    if (measureDatetime instanceof Date) {
+      this._measure_datetime = measureDatetime;
       return;
     }
     Exception.execute(
@@ -72,14 +72,14 @@ export class Measure {
     );
   }
 
-  setMeasureType(measure_type: MeasureTypeEnum) {
+  set measure_type(measure_type: MeasureTypeEnum) {
     if (Object.values(MeasureTypeEnum).includes(measure_type)) {
       switch (measure_type) {
         case MeasureTypeEnum.GAS:
-          this.measure_type = MeasureTypeEnum.GAS;
+          this._measure_type = MeasureTypeEnum.GAS;
           break;
         case MeasureTypeEnum.WATER:
-          this.measure_type = MeasureTypeEnum.WATER;
+          this._measure_type = MeasureTypeEnum.WATER;
           break;
         default:
           Exception.execute(
@@ -97,11 +97,11 @@ export class Measure {
     );
   }
 
-  setImageUrl(image_url: string) {
+  set image_url(image_url: string) {
     if (image_url) {
       const regex = /\.(jpg|jpeg|png|gif|bmp|tiff|tif|svg|webp|ico)$/;
       if (regex.test(image_url)) {
-        this.image_url = image_url;
+        this._image_url = image_url;
         return;
       }
     }
@@ -112,9 +112,9 @@ export class Measure {
     );
   }
 
-  setMeasureValue(measure_value: number) {
+  set measure_value(measure_value: number) {
     if (typeof measure_value === "number") {
-      this.measure_value = measure_value;
+      this._measure_value = measure_value;
       return;
     }
     Exception.execute(
@@ -124,9 +124,9 @@ export class Measure {
     );
   }
 
-  setCustomerCode(customer_code: string) {
+  set customer_code(customer_code: string) {
     if (typeof customer_code === "string") {
-      this.customer_code = customer_code;
+      this._customer_code = customer_code;
       return;
     }
     Exception.execute(
@@ -136,9 +136,9 @@ export class Measure {
     );
   }
 
-  setHasConfirmed(has_confirmed: boolean) {
+  set has_confirmed(has_confirmed: boolean) {
     if (typeof has_confirmed === "boolean") {
-      this.has_confirmed = has_confirmed;
+      this._has_confirmed = has_confirmed;
       return;
     }
     Exception.execute(
@@ -148,12 +148,12 @@ export class Measure {
     );
   }
 
-  create(dto: MeasureCreateDto) {
-    this.measure_uuid = randomUUID();
-    this.setMeasureDatetime(dto.measure_datetime);
-    this.setMeasureType(dto.measure_type);
-    this.setImageUrl(dto.image_url);
-    this.setMeasureValue(dto.measure_value);
-    this.setCustomerCode(dto.customer_code);
+  set create(dto: MeasureCreateDto) {
+    this._measure_uuid = randomUUID();
+    this.measure_datetime = dto.measure_datetime;
+    this.measure_type = dto.measure_type;
+    this.image_url = dto.image_url;
+    this.measure_value = dto.measure_value;
+    this.customer_code = dto.customer_code;
   }
 }

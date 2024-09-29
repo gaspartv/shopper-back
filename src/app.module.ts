@@ -21,7 +21,6 @@ import { ValidationExceptionFilter } from "./utils/validation-exception-filter";
       }),
     }),
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,

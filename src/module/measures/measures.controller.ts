@@ -3,12 +3,14 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   ParseEnumPipe,
   Patch,
   Post,
   Query,
 } from "@nestjs/common";
+import { Exception } from "../../utils/http-exception";
 import { ToUpperCasePipe } from "../../utils/to-upper-case-pipe";
 import { RequestConfirmDto } from "./dtos/request-confirm.dto";
 import { RequestSubmitImageDto } from "./dtos/request-submit-image.dto";
@@ -42,7 +44,15 @@ export class MeasuresController {
     @Query(
       "measure_type",
       new ToUpperCasePipe(),
-      new ParseEnumPipe(MeasureTypeEnum, { optional: true }),
+      new ParseEnumPipe(MeasureTypeEnum, {
+        optional: true,
+        exceptionFactory: () =>
+          Exception.execute(
+            "Tipo de medição não permitida",
+            "INVALID_TYPE",
+            HttpStatus.BAD_REQUEST,
+          ),
+      }),
     )
     measure_type?: MeasureTypeEnum,
   ): Promise<ResponseListDto> {
