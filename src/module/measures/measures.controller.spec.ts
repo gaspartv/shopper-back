@@ -1,5 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { randomUUID } from "crypto";
+import { env } from "../../configs/env";
 import { RequestSubmitImageDto } from "./dtos/request-submit-image.dto";
 import { ResponseSubmitImageDto } from "./dtos/response-submit-image.dto";
 import { MeasuresController } from "./measures.controller";
@@ -31,7 +32,7 @@ describe("MeasuresController", () => {
     it("", async () => {
       const requestDto: RequestSubmitImageDto = requestSubmitImageMock;
       const responseDto: ResponseSubmitImageDto = {
-        image_url: "http://localhost:3333/string-1727623308181.png",
+        image_url: `${env.BASE_URL}/string-1727623308181.png`,
         measure_uuid: randomUUID(),
         measure_value: 1230.5,
       };

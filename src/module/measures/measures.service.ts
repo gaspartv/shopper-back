@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
+import { env } from "../../configs/env";
 import { GeminiService } from "../../providers/gemini/gemini.service";
 import { Convert } from "../../utils/convert";
 import { Exception } from "../../utils/http-exception";
@@ -29,7 +30,7 @@ export class MeasuresService {
     const measureValue = await this.getMeasureValue(filePath, mimeType);
     const measure = await this.createMeasure(dto, name, measureValue);
     return {
-      image_url: `http://localhost:3333/${measure.image_url}`,
+      image_url: `${env.BASE_URL}/${measure.image_url}`,
       measure_value: measure.measure_value,
       measure_uuid: measure.measure_uuid,
     };
@@ -70,7 +71,7 @@ export class MeasuresService {
         measure_datetime: measure.measure_datetime,
         measure_type: measure.measure_type,
         has_confirmed: measure.has_confirmed,
-        image_url: `http://localhost:3333/${measure.image_url}`,
+        image_url: `${env.BASE_URL}/${measure.image_url}`,
       })),
     };
   }

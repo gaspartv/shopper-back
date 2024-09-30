@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://docker:docker@localhost:5432/shopper-db?schema=public"
+  url      = env("DATABASE_URL")
 }
 
 model Measure {

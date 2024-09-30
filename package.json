@@ -9,6 +9,7 @@
     "build": "nest build",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
+    "migration": "npx prisma migrate dev",
     "test": "jest"
   },
   "dependencies": {

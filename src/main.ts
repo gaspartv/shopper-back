@@ -5,6 +5,7 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import { join } from "path";
 import { AppModule } from "./app.module";
+import { env } from "./configs/env";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -39,8 +40,8 @@ async function bootstrap() {
     jsonDocumentUrl: "docs/json",
   });
 
-  await app.listen(3333, "0.0.0.0", () => {
-    Logger.log("3333", "StartedPort");
+  await app.listen(Number(env.PORT), "0.0.0.0", () => {
+    Logger.log(env.PORT, "StartedPort");
   });
 }
 bootstrap().then((r) => r);
