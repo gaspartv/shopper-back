@@ -11,7 +11,7 @@ import { ResponseSubmitImageDto } from "./dtos/response-submit-image.dto";
 import { MeasureTypeEnum } from "./enums/measure-type.enum";
 import { MeasuresRepository } from "./interfaces/measures.repository";
 import { MeasuresService } from "./measures.service";
-import { requestSubmitImageMock } from "./mocks/request-boyd-submit-image";
+import { requestSubmitImageMock } from "./mocks/request-body-submit-image";
 
 describe("MeasuresService", () => {
   let service: MeasuresService;
@@ -45,7 +45,7 @@ describe("MeasuresService", () => {
     geminiService = module.get<GeminiService>(GeminiService);
   });
 
-  it("should handle image submission correctly", async () => {
+  it("should correctly process image submission", async () => {
     const request: RequestSubmitImageDto = requestSubmitImageMock;
     const response: ResponseMeasureDto = {
       measure_uuid: randomUUID(),
@@ -73,7 +73,7 @@ describe("MeasuresService", () => {
     });
   });
 
-  it("should handle image confirm correctly", async () => {
+  it("should accurately confirm image submission", async () => {
     const request: RequestConfirmDto = {
       confirmed_value: 10,
       measure_uuid: randomUUID(),
@@ -98,7 +98,7 @@ describe("MeasuresService", () => {
     expect(result).toEqual({ success: true });
   });
 
-  it("should handle list correctly", async () => {
+  it("should successfully retrieve the list of measures", async () => {
     const customer_code = "customer1";
     const measure_type = MeasureTypeEnum.WATER;
 

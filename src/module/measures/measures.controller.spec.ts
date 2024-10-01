@@ -7,7 +7,7 @@ import { ResponseConfirmDto } from "./dtos/response-confirm.dto";
 import { ResponseSubmitImageDto } from "./dtos/response-submit-image.dto";
 import { MeasuresController } from "./measures.controller";
 import { MeasuresService } from "./measures.service";
-import { requestSubmitImageMock } from "./mocks/request-boyd-submit-image";
+import { requestSubmitImageMock } from "./mocks/request-body-submit-image";
 
 describe("MeasuresController", () => {
   let controller: MeasuresController;
