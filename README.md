@@ -111,8 +111,10 @@ docker-compose up --build
 
 Após iniciar a aplicação, você poderá acessá-la em:
 
-- API: http://localhost:3333
-- Documentação Swagger: http://localhost:3333/docs
+- **API**: http://localhost:3333
+- **Documentação Swagger**: http://localhost:3333/docs ou http://154.56.51.204:3333/docs
+- **POSTMAN**: https://www.postman.com/devdiegogaspar/shopper
+- Se necessário, a aplicação está disponível em um servidor pessoal no endereço: http://154.56.51.204:3333/
 
 ## Executando Testes
 
