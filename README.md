@@ -1,73 +1,142 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Gerenciamento de Leitura de Consumo de Água e Gás
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este projeto é uma API RESTful construída em Node.js com TypeScript utilizando o framework NestJS. A aplicação realiza a leitura individualizada de consumo de água e gás a partir de imagens de medidores, integrando-se com a API Google Gemini para extração de valores das imagens.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias Utilizadas
 
-## Description
+- **Framework**: NestJS
+- **ORM**: Prisma
+- **Banco de Dados**: PostgreSQL
+- **LLM**: Google Gemini
+- **Testes**: Jest
+- **Containerização**: Docker & Docker Compose
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Funcionalidades
 
-## Installation
+- **Upload de Imagem**: Endpoint para enviar a imagem do medidor, consultar o valor via API da Google Gemini e armazenar as leituras.
+- **Confirmação de Leitura**: Endpoint para confirmar ou corrigir manualmente o valor lido pela IA.
+- **Listagem de Leituras**: Endpoint para listar todas as leituras realizadas por um cliente, com filtro opcional por tipo de medidor (água ou gás).
+- **Validação de Dados**: Validação rigorosa dos dados recebidos e garantia de não duplicação de leituras no mesmo mês para o mesmo tipo de medidor.
+
+## Estrutura do Projeto
+
+A arquitetura segue o padrão do NestJS com o princípio de Clean Architecture, separando responsabilidades entre as camadas:
+
+- **Controller**: Gerencia as requisições HTTP e as respostas.
+- **Service/Entity**: Contém a lógica de negócio.
+- **Repository**: Responsável pelo acesso aos dados (banco de dados via Prisma).
+- **Modules**: Organizam o código por domínios.
+
+## Endpoints
+
+- **POST** /upload
+
+  - Recebe uma imagem em base64 e retorna o valor lido.
+  - Valida se já existe uma leitura no mês corrente.
+  - Exemplo de requisição:
+
+  ```bash
+  {
+  "image": "base64",
+  "customer_code": "customer1",
+  "measure_datetime": "2024-09-30T12:00:00Z",
+  "measure_type": "WATER"
+  }
+  ```
+
+- **PATCH** /confirm
+
+  - Confirma ou corrige o valor lido previamente pela IA.
+  - Exemplo de requisição:
+
+  ```bash
+  {
+  "measure_uuid": "123e4567-e89b-12d3-a456-426614174000",
+  "confirmed_value": 10
+  }
+  ```
+
+- **GET** /<customer_code>/list
+  - Lista todas as leituras de um cliente, com filtro opcional por tipo de medidor.
+  - Exemplo de URL com query param: GET /customer1/list?measure_type=WATER
+
+## Pré-requisitos
+
+- Node.js versão 18 ou superior.
+- Docker e Docker Compose instalados.
+- Chave de API para o Google Gemini.
+
+## Configuração do Ambiente
+
+Antes de rodar a aplicação, é necessário configurar o arquivo .env com as variáveis de ambiente. Utilize o arquivo .env.example como modelo:
 
 ```bash
-$ npm install
+GEMINI_API_KEY="SUA-CHAVE-AQUI"
+PORT=3333
+DATABASE_URL="postgresql://docker:docker@shopper_postgres:5432/shopper-db?schema=public"
+BASE_URL="http://localhost:3333"
 ```
 
-## Running the app
+### Estrutura do Arquivo .env
+
+- **GEMINI_API_KEY**: Chave da API do Google Gemini.
+- **PORT**: Porta onde a aplicação irá rodar.
+- **DATABASE_URL**: URL de conexão com o banco de dados PostgreSQL.
+- **BASE_URL**: URL base da aplicação.
+
+## Executando o Projeto
+
+A aplicação foi totalmente containerizada utilizando Docker. Siga os passos abaixo para rodar o projeto:
+
+### Clonar o repositório:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone git@github.com:gaspartv/shopper-back.git
+cd shopper-back
 ```
 
-## Test
+### Configurar o arquivo .env:
+
+Certifique-se de configurar as variáveis de ambiente, conforme explicado anteriormente.
+
+### Rodar a aplicação via Docker:
+
+A aplicação será executada e todos os serviços (API e banco de dados) serão inicializados via Docker Compose:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up --build
 ```
 
-## Support
+### Acessar a aplicação:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Após iniciar a aplicação, você poderá acessá-la em:
 
-## Stay in touch
+- API: http://localhost:3333
+- Documentação Swagger: http://localhost:3333/docs
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Executando Testes
 
-## License
+Os testes unitários foram implementados utilizando Jest. Para rodar os testes, execute o comando:
 
-Nest is [MIT licensed](LICENSE).
+```bash
+npm run test
+```
+
+## Importante
+
+**Validação de ENV**: A aplicação valida automaticamente a existência e consistência das variáveis de ambiente. Certifique-se de que o arquivo .env está devidamente configurado para evitar problemas na execução.
+
+## Docker Compose
+
+O arquivo docker-compose.yml está configurado para subir os seguintes serviços:
+
+- **API**: Aplicação Node.js rodando na porta 3333.
+- **PostgreSQL**: Banco de dados configurado para rodar na porta 5432.
+
+Exemplo de comando:
+
+```bash
+docker-compose up --build
+```
+
+Esse comando irá subir a aplicação, executar os testes e deixar tudo pronto para a avaliação.

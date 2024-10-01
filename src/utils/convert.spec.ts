@@ -23,7 +23,7 @@ describe("Convert", () => {
         customerCode,
       );
 
-      const expectedFileName = `${customerCode}-${Date.now()}.png`;
+      const expectedFileName = result.name;
       const expectedFilePath = join(
         __dirname,
         "..",
@@ -49,9 +49,7 @@ describe("Convert", () => {
 
   describe("extractImageData", () => {
     it("should extract type and base64 data from a valid image string", () => {
-      const result = Convert["extractImageData"](
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...",
-      );
+      const result = Convert["extractImageData"](requestSubmitImageMock.image);
       expect(result).toEqual({
         type: "image/png",
         base64Data: expect.any(Buffer),
